@@ -1,0 +1,50 @@
+name: Bump Insync version
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve latest version
+        id: latest
+        run: |
+          url=$(curl -sLI -o /dev/null -w '%{url_effective}' \
+            https://dl.insynchq.com/linux/server/debian/buster)
+          ver=$(echo "$url" | grep -oP 'insync-headless_\K[0-9.]+(?=-buster)')
+          if [ -z "$ver" ]; then
+            echo "Failed to parse version from: $url" >&2
+            exit 1
+          fi
+          echo "version=$ver" >> "$GITHUB_OUTPUT"
+
+      - name: Read current version
+        id: current
+        run: |
+          ver=$(grep -oP 'INSYNC_VERSION=\K[0-9.]+' Dockerfile)
+          echo "version=$ver" >> "$GITHUB_OUTPUT"
+
+      - name: Open PR if newer
+        if: steps.latest.outputs.version != steps.current.outputs.version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEW: ${{ steps.latest.outputs.version }}
+          OLD: ${{ steps.current.outputs.version }}
+        run: |
+          branch="bump/insync-$NEW"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          sed -i "s/INSYNC_VERSION=$OLD/INSYNC_VERSION=$NEW/" Dockerfile
+          git commit -am "Bump Insync to $NEW"
+          git push -u origin "$branch"
+          gh pr create --title "Bump Insync to $NEW" \
+                       --body "Automated bump from $OLD → $NEW."
