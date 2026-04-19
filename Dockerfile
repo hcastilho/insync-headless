@@ -12,4 +12,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certifi
     apt-get purge -y curl && apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
-CMD ["insync-headless", "start", "--no-daemon"]
+ENTRYPOINT ["/usr/bin/gosu", "root", "/entrypoint.sh"]
