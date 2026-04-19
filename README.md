@@ -6,18 +6,7 @@ Published to `ghcr.io/hcastilho/insync-headless`.
 
 ## Usage
 
-```yaml
-services:
-  insync:
-    image: ghcr.io/hcastilho/insync-headless:latest
-    restart: unless-stopped
-    volumes:
-      - insync-data:/root/.config/Insync
-      - /path/to/sync/target:/data:rw
-
-volumes:
-  insync-data:
-```
+See [docker-compose.yml](docker-compose.yml) for an example.
 
 ## First-run auth
 

@@ -1,4 +1,4 @@
-iservices:
+services:
   insync:
     image: ghcr.io/hcastilho/insync-headless:latest
     container_name: insync
@@ -7,6 +7,6 @@ iservices:
       - PGID=1000
       - TZ=Europe/Lisbon
     volumes:
-      - .config:/root/.config/Insync:Z
+      - .config:/config:Z
       - ${VAULT_PATH}:/data:rw,z
     restart: unless-stopped
