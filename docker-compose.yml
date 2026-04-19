@@ -1,0 +1,11 @@
+iservices:
+  insync:
+    image: ghcr.io/hcastilho/insync-headless:latest
+    container_name: insync
+    restart: unless-stopped
+    volumes:
+      - insync-data:/root/.config/Insync
+      - ${VAULT_PATH}:/vault:rw
+
+volumes:
+  insync-data:
