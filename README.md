@@ -8,16 +8,23 @@ Published to `ghcr.io/hcastilho/insync-headless`.
 
 See [docker-compose.yml](docker-compose.yml) for an example.
 
-## First-run auth
+## First-run setup
 
-Insync headless requires Google account linking on first start. Start the container, then run `add-account` inside it:
+The container runs as UID 1000 (the `ubuntu` user). The host `./config` and `${VAULT_PATH}` directories must be writable by that UID:
+
+```bash
+mkdir -p ./config
+sudo chown -R 1000:1000 ./config "${VAULT_PATH}"
+```
+
+Then link a Google account:
 
 ```bash
 docker compose up -d
-docker compose exec insync insync-headless add-account -a <email> -p /data
+docker compose exec insync insync-headless account add -a <email> -c gd -p /data
 ```
 
-Auth state persists in the `.config` bind mount — do not delete it.
+Auth state persists in the `./config` bind mount — do not delete it.
 
 ## License
 

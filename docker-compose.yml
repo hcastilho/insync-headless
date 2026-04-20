@@ -5,6 +5,6 @@ services:
     environment:
       - TZ=Europe/Lisbon
     volumes:
-      - .config:/home/ubuntu/.config/Insync-headless:Z
+      - ./config:/home/ubuntu/.config/Insync-headless:Z
       - ${VAULT_PATH}:/data:rw,z
     restart: unless-stopped
