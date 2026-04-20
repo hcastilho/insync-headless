@@ -17,7 +17,7 @@ docker compose up -d
 docker compose exec insync insync-headless add-account -a <email> -p /data
 ```
 
-Auth state persists in `/config` (the `.config` bind mount) — do not delete it.
+Auth state persists in the `.config` bind mount — do not delete it.
 
 ## License
 

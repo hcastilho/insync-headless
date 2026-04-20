@@ -3,10 +3,8 @@ services:
     image: ghcr.io/hcastilho/insync-headless:latest
     container_name: insync
     environment:
-      - PUID=1000
-      - PGID=1000
       - TZ=Europe/Lisbon
     volumes:
-      - .config:/config:Z
+      - .config:/home/ubuntu/.config/Insync-headless:Z
       - ${VAULT_PATH}:/data:rw,z
     restart: unless-stopped
