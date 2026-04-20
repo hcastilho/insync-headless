@@ -43,8 +43,16 @@ else
     fi
 fi
 
-# --- 5. Start Insync ---
+# --- 5. Point Insync's config dir at /config ---
+# Insync has no --config-path flag; it reads from ~/.config/Insync.
+# Symlink that path to the /config bind mount so state persists there.
+USER_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
+mkdir -p "$USER_HOME/.config"
+ln -sfn /config "$USER_HOME/.config/Insync"
+chown -h "$PUID:$PGID" "$USER_HOME/.config/Insync"
+
+# --- 6. Start Insync ---
 echo "Starting Insync-headless engine..."
 # We use 'exec' so Insync becomes PID 1 and receives shutdown signals correctly.
 # We use 'gosu' to drop from root to our PUID/PGID user.
-exec gosu "$TARGET_USER" insync-headless start --no-daemon --config-path=/config
+exec gosu "$TARGET_USER" insync-headless start --no-daemon
