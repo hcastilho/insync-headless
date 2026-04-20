@@ -12,4 +12,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certifi
     apt-get purge -y curl && apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
+COPY --chmod=0755 entrypoint.sh /entrypoint.sh
+
 ENTRYPOINT ["/usr/sbin/gosu", "root", "/entrypoint.sh"]
