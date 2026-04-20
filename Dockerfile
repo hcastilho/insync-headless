@@ -14,4 +14,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certifi
 
 COPY --chmod=0755 entrypoint.sh /entrypoint.sh
 
-ENTRYPOINT ["/usr/sbin/gosu", "root", "/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

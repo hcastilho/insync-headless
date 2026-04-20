@@ -10,15 +10,14 @@ See [docker-compose.yml](docker-compose.yml) for an example.
 
 ## First-run auth
 
-Insync headless requires interactive Google account linking on first start. Run once on the host to link the account:
+Insync headless requires Google account linking on first start. Start the container, then run `add-account` inside it:
 
 ```bash
-docker compose run --rm insync insync-headless start
-# in another shell, attach and run:
+docker compose up -d
 docker compose exec insync insync-headless add-account -a <email> -p /data
 ```
 
-Auth state persists in the `insync-data` volume — do not delete it.
+Auth state persists in `/config` (the `.config` bind mount) — do not delete it.
 
 ## License
 
