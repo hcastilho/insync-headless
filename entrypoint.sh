@@ -7,15 +7,15 @@ PGID=${PGID:-1000}
 echo "--- Initializing Insync-headless Container ---"
 echo "User ID: $PUID | Group ID: $PGID"
 
-# --- 2. Create User/Group if they don't exist ---
-# Check if group exists, create if not
-if ! getent group insync >/dev/null; then
-    groupadd -g "$PGID" insync
-fi
-
-# Check if user exists, create if not
-if ! getent passwd insync >/dev/null; then
+# --- 2. Resolve or create the target user ---
+TARGET_USER=$(getent passwd "$PUID" | cut -d: -f1)
+if [ -z "$TARGET_USER" ]; then
+    echo "No user exists at UID $PUID — creating 'insync'..."
+    groupadd -g "$PGID" insync 2>/dev/null || true
     useradd -u "$PUID" -g "$PGID" -m -s /bin/bash insync
+    TARGET_USER=insync
+else
+    echo "Using existing user '$TARGET_USER' at UID $PUID"
 fi
 
 # --- 3. Emergency Cleanup ---
@@ -47,4 +47,4 @@ fi
 echo "Starting Insync-headless engine..."
 # We use 'exec' so Insync becomes PID 1 and receives shutdown signals correctly.
 # We use 'gosu' to drop from root to our PUID/PGID user.
-exec gosu insync insync-headless start --no-daemon --config-path=/config
+exec gosu "$TARGET_USER" insync-headless start --no-daemon --config-path=/config
